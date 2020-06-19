@@ -9,7 +9,7 @@ class h1DModel:
                 nbins,
                 xlow,
                 xhigh,
-                weight = '',
+                weight = None,
                 xlabel = '',
                 ylabel = 'Events' ):
     if xlow >= xhigh:
@@ -36,6 +36,11 @@ class fileService:
       sys.exit()
     self.branches = self.tree.arrays(namedecode='utf-8')
     self.label    = label
+  def addMask(self,maskname,exp,varList):
+    varDict = {}
+    for var in varList:
+       varDict[var] = self.branches[var]
+    self.branches[maskname] = eval(exp,varDict)
 
 def SimplePlot( fileServiceList,
                 hmodel,
@@ -43,7 +48,8 @@ def SimplePlot( fileServiceList,
                 style    = 'white',  
                 text     = '',
                 histtype = 'step',
-                norm     = False ):
+                norm     = False,
+                maskname = '' ):
   if len(fileServiceList)==0:
     print('Error: no files specified.')
     sys.exit()
@@ -62,28 +68,24 @@ def SimplePlot( fileServiceList,
   for fs in fileServiceList:
     if hmodel.var not in fs.branches:
       print('Error: variable {} not found in file {}.'.format(hmodel.var,fs.filepathname))
+      sys.exit()  
+    if (hmodel.weight is not None) and (hmodel.weight not in fs.branches):
+      print('Error: weight {} not found in file {}.'.format(hmodel.weight,fs.filepathname))
       sys.exit()
-    # create histograms
-    if hmodel.weight=='':
-      n,bins,patches = plt.hist( fs.branches[hmodel.var],
-                                 bins     = hmodel.nbins,
-                                 range    = (hmodel.xlow,hmodel.xhigh),
-                                 histtype = histtype,
-                                 label    = fs.label,
-                                 density  = norm
-                               )
-    else:
-      if hmodel.weight not in fs.branches:
-        print('Error: weight {} not found in file {}.'.format(hmodel.weight,fs.filepathname))
-        sys.exit()
-      n,bins,patches = plt.hist( fs.branches[hmodel.var],
-                                 weights  = fs.branches[hmodel.weight],
-                                 bins     = hmodel.nbins,
-                                 range    = (hmodel.xlow,hmodel.xhigh),
-                                 histtype = histtype,
-                                 label    = fs.label,
-                                 density  = norm
-                               )
+    # create histogram
+    data   = fs.branches[hmodel.var]
+    weight = fs.branches[hmodel.weight]
+    if maskname is not '':
+      data   = data[fs.branches[maskname]]
+      weight = weight[fs.branches[maskname]]
+    n,bins,patches = plt.hist( data,
+                               weights  = weight,
+                               bins     = hmodel.nbins,
+                               range    = (hmodel.xlow,hmodel.xhigh),
+                               histtype = histtype,
+                               label    = fs.label,
+                               density  = norm
+                             )
   # set limits on axes
   ax.set_ylim([0,None])
   ax.set_xlim([hmodel.xlow,hmodel.xhigh])

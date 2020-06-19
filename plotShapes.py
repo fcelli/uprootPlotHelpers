@@ -65,24 +65,36 @@ for hmodel in h1DModels:
                                             label        = 'Vqq'
                                           ) )
 
-    text = uh.AtlasLabel( internal   = True,
-                          sim        = True,
-                          com_energy = 13,
-                          lumi       = 136.0,
-                          more       = reg.upper()
-                        ) 
+    # define cuts
+    for f in fileServiceList:
+      f.addMask('Hcand_m_l100'     ,'Hcand_m < 100'                    ,['Hcand_m'] )
+      f.addMask('Hcand_m_g100l150' ,'(Hcand_m > 100) & (Hcand_m < 150)'  ,['Hcand_m'] )
+      f.addMask('Hcand_m_g150'     ,'Hcand_m > 150'                    ,['Hcand_m'] )
+      f.addMask('Hcand_pt_l450'    ,'Hcand_pt < 450'                   ,['Hcand_pt'])
+      f.addMask('Hcand_pt_g450l650','(Hcand_pt > 450) & (Hcand_pt < 650)',['Hcand_pt'])
+      f.addMask('Hcand_pt_g650'    ,'Hcand_pt > 650'                   ,['Hcand_pt'])
 
-    fig,ax = uh.SimplePlot( fileServiceList,
-                            hmodel,
-                            figsize  = (8,6),
-                            style    = 'white', 
-                            text     = text,
-                            histtype = 'step',
-                            norm     = True
+    selections = ['','Hcand_m_l100','Hcand_m_g100l150','Hcand_m_g150','Hcand_pt_l450','Hcand_pt_g450l650','Hcand_pt_g650']
+    for mask in selections:
+      text = uh.AtlasLabel( internal   = True,
+                            sim        = True,
+                            com_energy = 13,
+                            lumi       = 136.0,
+                            more       = reg.upper()+' '+mask
                           )
 
-    extList = ['.png','.pdf']
-    for ext in extList:
-      figName = '{}_{}{}'.format(reg,hmodel.var,ext)
-      print('Writing '+figName)
-      plt.savefig('./'+figName)
+      fig,ax = uh.SimplePlot( fileServiceList,
+                              hmodel,
+                              figsize  = (8,6),
+                              style    = 'white', 
+                              text     = text,
+                              histtype = 'step',
+                              norm     = True,
+                              maskname = mask
+                            )
+
+      extList = ['.png','.pdf']
+      for ext in extList:
+        figName = '{}_{}_{}{}'.format(reg,mask,hmodel.var,ext)
+        print('Writing '+figName)
+        plt.savefig('./'+figName)
