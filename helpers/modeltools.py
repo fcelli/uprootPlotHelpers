@@ -16,6 +16,7 @@ class h1DModel:
     self.nbins  = nbins
     self.xlow   = xlow
     self.xhigh  = xhigh
+    self.step   = float(xhigh-xlow)/nbins
     self.weight = weight
     self.xlabel = xlabel
     self.ylabel = ylabel
