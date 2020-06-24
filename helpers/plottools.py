@@ -1,7 +1,8 @@
 import copy
-import matplotlib.pyplot as plt #FIXME move style to separate script
+import matplotlib.pyplot as plt
 import numpy as np
 import sys
+from helpers import styletools
 
 def Plots1D(tuplelist,hmod,mask=None,**kwargs):
   '''
@@ -11,11 +12,15 @@ def Plots1D(tuplelist,hmod,mask=None,**kwargs):
 
   fig = None
   ax  = None
-  axratio = None
+  axratio = None 
   if len(tuplelist)>1:
-    fig, (ax, axratio) = plt.subplots(2, sharex=True, gridspec_kw={'hspace': 0, 'height_ratios':[4,1]})
+    fig, (ax, axratio) = plt.subplots( 2,
+                                       figsize     = styletools.figsize,
+                                       sharex      = True,
+                                       gridspec_kw = { 'hspace'       : 0,
+                                                       'height_ratios': [4,1] } )
   else:
-    fig, ax = plt.subplots(figsize=(8,6))
+    fig, ax = plt.subplots(figsize=styletools.figsize)
 
   nlist       = []
   binslist    = [] 
@@ -57,7 +62,7 @@ def Plots1D(tuplelist,hmod,mask=None,**kwargs):
 
 def ScatterPlot(tuplelist,xhmod,yhmod,marker='.',s=1,alpha=1,maskname=None,**kwargs):
   tuplelist,kwargs = ParseArgs(tuplelist,kwargs)
-  fig, ax = plt.subplots(figsize=(8,6))  
+  fig, ax = plt.subplots(figsize=styletools.figsize)  
   for fmopt in tuplelist:
     xdata = fmopt[0].df[xhmod.var]
     ydata = fmopt[0].df[yhmod.var]
@@ -83,7 +88,7 @@ def ContourPlot(tuplelist,xhmod,yhmod,nlevels=10,alpha=1,maskname=None,**kwargs)
   '''
   # parse arguments
   tuplelist,kwargs = ParseArgs(tuplelist,kwargs) 
-  fig, ax = plt.subplots(figsize=(8,6)) 
+  fig, ax = plt.subplots(figsize=styletools.figsize) 
   lelms  = []
   labels = [] 
   for fmopt in tuplelist:
