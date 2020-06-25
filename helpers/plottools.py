@@ -4,7 +4,7 @@ import numpy as np
 import sys
 from helpers import styletools
 
-def Histos1D(tuplelist,hmod,mask=None,**kwargs):
+def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
   '''
   tuplelist format: [(FileManager,{opt1:val1, opt2:val2, ...})]
   '''
@@ -31,10 +31,10 @@ def Histos1D(tuplelist,hmod,mask=None,**kwargs):
     weight = None
     if hmod.weight is not None:
       weight = fmopt[0].df[hmod.weight]
-    if mask is not None:
-      data = data[mask]
+    if maskname is not None:
+      data = data[fmopt[0].df[maskname]]
       if weight is not None:
-        weight = weight[mask]
+        weight = weight[fmopt[0].df[maskname]]
     n,bins,_ = ax.hist( data,
                         weights  = weight,
                         bins     = hmod.nbins,
@@ -79,7 +79,7 @@ def Histos1D(tuplelist,hmod,mask=None,**kwargs):
 
 def ScatterPlot(tuplelist,xhmod,yhmod,marker='.',s=1,alpha=1,maskname=None,**kwargs):
   tuplelist,kwargs = ParseArgs(tuplelist,kwargs)
-  fig, ax = plt.subplots(figsize=styletools.figsize)  
+  fig, ax = plt.subplots(figsize=styletools.figsize) 
   for fmopt in tuplelist:
     xdata = fmopt[0].df[xhmod.var]
     ydata = fmopt[0].df[yhmod.var]
@@ -105,7 +105,8 @@ def ContourPlot(tuplelist,xhmod,yhmod,nlevels=10,alpha=1,maskname=None,**kwargs)
   '''
   # parse arguments
   tuplelist,kwargs = ParseArgs(tuplelist,kwargs) 
-  fig, ax = plt.subplots(figsize=styletools.figsize) 
+  fig, ax = plt.subplots(figsize=styletools.figsize)
+  styletools.StyleContourPlot(ax) 
   lelms  = []
   labels = [] 
   for fmopt in tuplelist:
@@ -172,7 +173,7 @@ def ParseArgs(tuplelist,kwargs):
     if 'color' not in fmopt[1]: fmopt[1]['color'] = 'C'+str(tuplelist.index(fmopt))
   if 'norm'       not in kwargs: kwargs['norm']       = False
   if 'xrange'     not in kwargs: kwargs['xrange']     = [None,None]
-  if 'yrange'     not in kwargs: kwargs['yrange']     = [None,None]
+  if 'yrange'     not in kwargs: kwargs['yrange']     = [0,None]
   if 'ratio'      not in kwargs: kwargs['ratio']      = 0
   if 'makeratio'  not in kwargs: kwargs['makeratio']  = True
   if 'ratiorange' not in kwargs: kwargs['ratiorange'] = [None,None]

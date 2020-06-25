@@ -82,3 +82,19 @@ def StyleHistos1D(ax,axratio=None):
       tick.set_color(ticklabelcolor)
     for tick in axratio.get_yticklabels():
       tick.set_color(ticklabelcolor)
+
+def StyleContourPlot(ax):
+  global theme,facecolor,linestyle,gridcolor,gridlinestyle,axiscolor,tickcolor,ticklabelcolor
+  ax.set_facecolor(facecolor)
+  #ax.grid(color=gridcolor, linestyle=gridlinestyle)
+  ax.set_axisbelow(True)
+  for spine in ax.spines.values():
+    spine.set_visible(True)
+    spine.set_color(axiscolor)
+  ax.xaxis.tick_bottom()
+  ax.yaxis.tick_left()
+  ax.tick_params(colors=tickcolor,direction='out')
+  for tick in ax.get_xticklabels():
+    tick.set_color(ticklabelcolor)
+  for tick in ax.get_yticklabels():
+    tick.set_color(ticklabelcolor)
