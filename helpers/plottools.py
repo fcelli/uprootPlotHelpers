@@ -55,7 +55,6 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
   ax.legend()
 
   ratiodata  = {}
-  maskfinite = {}
   if len(tuplelist)>1 and kwargs['makeratio']:
     for i in range(0,len(tuplelist)):
       if i == kwargs['ratio']: continue
@@ -63,14 +62,13 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
         warnings.filterwarnings('ignore', 'divide by zero encountered in true_divide', RuntimeWarning)
         warnings.filterwarnings('ignore', 'invalid value encountered in true_divide' , RuntimeWarning) 
         ratiodata[i] = np.array(nlist[i])/np.array(nlist[kwargs['ratio']]) 
-
     for idx in ratiodata:
       maskfinite = [ (not np.isnan(x)) and (x!=np.inf) for x in ratiodata[idx] ] # determine finite ratio values   
       axratio.hist( x        = binslist[idx][:-1][maskfinite], # initialize with 1 entry per finite bin
                     bins     = binslist[idx],                  # use same binning as original histos
                     weights  = ratiodata[idx][maskfinite],     # weight the only entry per bin by the ratio values
                     color    = tuplelist[idx][1]['color'],
-                    histtype = 'step' ) 
+                    histtype = 'step' )
     if kwargs['xrange'] == [None,None]: 
       axratio.set_xlim([hmod.xlow,hmod.xhigh])
     else:
