@@ -42,4 +42,4 @@ class FileManager:
     for var in varlist:
        vdict[var] = self.df[var]
     self.df[maskname] = eval(exp,vdict)
-
+    return maskname
