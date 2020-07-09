@@ -13,7 +13,6 @@ def main():
                             nbins  = 50,
                             xlow   = 0,
                             xhigh  = 0.5,
-                            weight = 'w',
                             xlabel = 'Large-R Jet C2',
                             ylabel = 'Events' ) )
 
@@ -21,7 +20,6 @@ def main():
                             nbins  = 50,
                             xlow   = 0,
                             xhigh  = 4,
-                            weight = 'w',
                             xlabel = 'Large-R Jet D2',
                             ylabel = 'Events' ) )
 
@@ -29,7 +27,6 @@ def main():
                             nbins  = 50,
                             xlow   = 0,
                             xhigh  = 1,
-                            weight = 'w',
                             xlabel = 'Large-R Jet $\\tau_{21}$',
                             ylabel = 'Events' ) )
 
@@ -56,8 +53,8 @@ def main():
       if idx == len(hmodels)-1: continue
       for yhmod in hmodels[idx+1:]:
 
-        ContourPlot( [ (fm_higgs,{'label':'Higgs','color':'C0'}),
-                       (fm_ttbar,{'label':'ttbar','color':'C1'}) ],
+        ContourPlot( [ (fm_higgs,{'label':'Higgs','weight':'w','color':'C0'}),
+                       (fm_ttbar,{'label':'ttbar','weight':'w','color':'C1'}) ],
                      xhmod     = xhmod,
                      yhmod     = yhmod,
                      nlevels   = 8 )
@@ -69,8 +66,8 @@ def main():
 
         plt.close('all')
 
-        ContourPlot( [ (fm_higgs,{'label':'Higgs','color':'C0'}),
-                       (fm_QCD  ,{'label':'QCD','color':'C2'}) ],
+        ContourPlot( [ (fm_higgs,{'label':'Higgs','weight':'w','color':'C0'}),
+                       (fm_QCD  ,{'label':'QCD'  ,'weight':'w','color':'C2'}) ],
                      xhmod     = xhmod,
                      yhmod     = yhmod, 
                      nlevels   = 8 )
@@ -82,8 +79,8 @@ def main():
 
         plt.close('all')  
 
-        ContourPlot( [ (fm_higgs,{'label':'Higgs','color':'C0'}),
-                       (fm_Vqq  ,{'label':'Vqq','color':'C3'}) ],
+        ContourPlot( [ (fm_higgs,{'label':'Higgs','weight':'w','color':'C0'}),
+                       (fm_Vqq  ,{'label':'Vqq'  ,'weight':'w','color':'C3'}) ],
                      xhmod     = xhmod,
                      yhmod     = yhmod, 
                      nlevels   = 8 )

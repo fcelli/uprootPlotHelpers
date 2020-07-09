@@ -27,9 +27,9 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
   binslist    = [] 
   for fmopt in tuplelist:
     data   = fmopt[0].df[hmod.var]
-    weight = None
-    if hmod.weight is not None:
-      weight = fmopt[0].df[hmod.weight]
+    weight = fmopt[1]['weight']
+    if weight is not None:
+      weight = fmopt[0].df[weight]
     if maskname is not None:
       data = data[fmopt[0].df[maskname]]
       if weight is not None:
@@ -118,20 +118,18 @@ def ContourPlot(tuplelist,xhmod,yhmod,nlevels=10,alpha=1,maskname=None,**kwargs)
     if len(xdata) != len(ydata):
       print('Error: xdata and ydata must have the same dimension.')
       sys.exit()
-    # define weights
-    if xhmod.weight != yhmod.weight:
-      print('Error: xhmod and yhmod must have the same weight.')
-      sys.exit()
-    weight = []
-    if xhmod.weight is not None:
-      weight = fmopt[0].df[xhmod.weight]
+    # define weights 
+    weight = fmopt[1]['weight']
+    if weight is not None:
+      weight = fmopt[0].df[weight]
     else:
       weight = np.ones(len(xdata))
     # apply additional mask (if specified)
     if maskname is not None:
-      xdata = xdata[maskname]
-      ydata = ydata[maskname]
-      weight = weight[maskname]
+      xdata  = xdata[maskname]
+      ydata  = ydata[maskname]
+      if weight is not None:
+        weight = weight[maskname]
     # create 2D histogram
     counts,_,_ = np.histogram2d( x       = xdata,
                                  y       = ydata,
@@ -170,9 +168,10 @@ def ParseArgs(tuplelist,kwargs):
     tuplelist_new.append((fmopt[0],extrainfo))
   tuplelist = tuplelist_new
   for fmopt in tuplelist:
-    if 'opt'   not in fmopt[1]: fmopt[1]['opt']   = 'step'
-    if 'label' not in fmopt[1]: fmopt[1]['label'] = ''
-    if 'color' not in fmopt[1]: fmopt[1]['color'] = 'C'+str(tuplelist.index(fmopt))
+    if 'opt'    not in fmopt[1]: fmopt[1]['opt']    = 'step'
+    if 'label'  not in fmopt[1]: fmopt[1]['label']  = ''
+    if 'color'  not in fmopt[1]: fmopt[1]['color']  = 'C'+str(tuplelist.index(fmopt))
+    if 'weight' not in fmopt[1]: fmopt[1]['weight'] = None
   if 'norm'       not in kwargs: kwargs['norm']       = False
   if 'xrange'     not in kwargs: kwargs['xrange']     = [None,None]
   if 'yrange'     not in kwargs: kwargs['yrange']     = [0,None]

@@ -6,7 +6,6 @@ class h1DModel:
                 nbins,
                 xlow,
                 xhigh,
-                weight = None,
                 xlabel = '',
                 ylabel = '' ):
     if xlow >= xhigh:
@@ -17,6 +16,5 @@ class h1DModel:
     self.xlow   = xlow
     self.xhigh  = xhigh
     self.step   = float(xhigh-xlow)/nbins
-    self.weight = weight
     self.xlabel = xlabel
     self.ylabel = ylabel

@@ -22,7 +22,6 @@ def main():
                             nbins  = 50,
                             xlow   = 0,
                             xhigh  = 0.5,
-                            weight = 'w',
                             xlabel = 'Large-R Jet C2',
                             ylabel = 'Events (Normalised)' ) )
 
@@ -30,7 +29,6 @@ def main():
                             nbins  = 50,
                             xlow   = 0,
                             xhigh  = 4,
-                            weight = 'w',
                             xlabel = 'Large-R Jet D2',
                             ylabel = 'Events (Normalised)' ) )
 
@@ -38,7 +36,6 @@ def main():
                             nbins  = 50,
                             xlow   = 0,
                             xhigh  = 1,
-                            weight = 'w',
                             xlabel = 'Large-R Jet $\\tau_{21}$',
                             ylabel = 'Events (Normalised)' ) )
 
@@ -46,7 +43,6 @@ def main():
                             nbins  = 50,
                             xlow   = 0,
                             xhigh  = 1,
-                            weight = 'w',
                             xlabel = 'Large-R Jet $\\tau_{32}$',
                             ylabel = 'Events (Normalised)' ) )
 
@@ -76,10 +72,10 @@ def main():
     for cut in cutlist:
       for hmod in hmodels:
 
-        Histos1D( [ (fm_higgs,{'label':'Higgs'}),
-                    (fm_ttbar,{'label':'ttbar'}),
-                    (fm_QCD  ,{'label':'QCD'  }),
-                    (fm_Vqq  ,{'label':'Vqq'  }) ],
+        Histos1D( [ (fm_higgs,{'label':'Higgs','weight':'w'}),
+                    (fm_ttbar,{'label':'ttbar','weight':'w'}),
+                    (fm_QCD  ,{'label':'QCD'  ,'weight':'w'}),
+                    (fm_Vqq  ,{'label':'Vqq'  ,'weight':'w'}) ],
                   hmod      = hmod,
                   norm      = True,
                   maskname  = cut,
