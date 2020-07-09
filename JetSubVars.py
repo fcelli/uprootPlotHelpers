@@ -13,7 +13,7 @@ def ApplyCuts(fm):
 
 def main():
   path    = '/afs/cern.ch/work/f/fcelli/private/ATLAS/HbbJetMiniNtuples/C2Studies/200618/'
-  cols    = ['w','Hcand_m','Hcand_pt','Hcand_C2','Hcand_D2','Hcand_tau21']
+  cols    = ['w','Hcand_m','Hcand_pt','Hcand_C2','Hcand_D2','Hcand_tau21','Hcand_tau32']
   reglist = ['srl','srs']
   cutlist = [None,'m_l100','m_g100l150','m_g150','pt_l450','pt_g450l650','pt_g650']
   extlist = ['.pdf','.png']
@@ -40,6 +40,14 @@ def main():
                             xhigh  = 1,
                             weight = 'w',
                             xlabel = 'Large-R Jet $\\tau_{21}$',
+                            ylabel = 'Events (Normalised)' ) )
+
+  hmodels.append( h1DModel( var    = 'Hcand_tau32',
+                            nbins  = 50,
+                            xlow   = 0,
+                            xhigh  = 1,
+                            weight = 'w',
+                            xlabel = 'Large-R Jet $\\tau_{32}$',
                             ylabel = 'Events (Normalised)' ) )
 
   for reg in reglist:
