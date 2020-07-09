@@ -1,7 +1,6 @@
-import copy
+import copy, warnings
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
 from helpers import styletools
 
 def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
@@ -55,16 +54,19 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
   ax.set_ylim(kwargs['yrange'])
   ax.legend()
 
-  ratiodata = {}
+  ratiodata  = {}
   if len(tuplelist)>1 and kwargs['makeratio']:
     for i in range(0,len(tuplelist)):
       if i == kwargs['ratio']: continue
-      ratiodata[i] = np.array(nlist[i])/np.array(nlist[kwargs['ratio']])
-    
+      with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', 'divide by zero encountered in true_divide', RuntimeWarning)
+        warnings.filterwarnings('ignore', 'invalid value encountered in true_divide' , RuntimeWarning) 
+        ratiodata[i] = np.array(nlist[i])/np.array(nlist[kwargs['ratio']]) 
     for idx in ratiodata:
-      axratio.hist( binslist[idx][:-1],
-                    binslist[idx],
-                    weights  = ratiodata[idx],
+      maskfinite = [ (not np.isnan(x)) and (x!=np.inf) for x in ratiodata[idx] ] # determine finite ratio values   
+      axratio.hist( x        = binslist[idx][:-1][maskfinite], # initialize with 1 entry per finite bin
+                    bins     = binslist[idx],                  # use same binning as original histos
+                    weights  = ratiodata[idx][maskfinite],     # weight the only entry per bin by the ratio values
                     color    = tuplelist[idx][1]['color'],
                     histtype = 'step' )
     if kwargs['xrange'] == [None,None]: 
