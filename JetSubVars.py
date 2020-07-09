@@ -4,18 +4,19 @@ from helpers.plottools  import Histos1D
 import matplotlib.pyplot as plt
 
 def ApplyCuts(fm):
-  fm.addmask('m_l100'     ,'Hcand_m<100'                  ,['Hcand_m'])
-  fm.addmask('m_g100l150' ,'(Hcand_m>100)&(Hcand_m<150)'  ,['Hcand_m'])
-  fm.addmask('m_g150'     ,'Hcand_m>150'                  ,['Hcand_m'])
-  fm.addmask('pt_l450'    ,'Hcand_pt<450'                 ,['Hcand_pt'])
-  fm.addmask('pt_g450l650','(Hcand_pt>450)&(Hcand_pt<650)',['Hcand_pt'])
-  fm.addmask('pt_g650'    ,'Hcand_pt>650'                 ,['Hcand_pt'])
+  cutlist = []
+  cutlist.append( fm.addmask('m_l100'     ,'Hcand_m<100'                  ,['Hcand_m'])  )
+  cutlist.append( fm.addmask('m_g100l150' ,'(Hcand_m>100)&(Hcand_m<150)'  ,['Hcand_m'])  )
+  cutlist.append( fm.addmask('m_g150'     ,'Hcand_m>150'                  ,['Hcand_m'])  )
+  cutlist.append( fm.addmask('pt_l450'    ,'Hcand_pt<450'                 ,['Hcand_pt']) )
+  cutlist.append( fm.addmask('pt_g450l650','(Hcand_pt>450)&(Hcand_pt<650)',['Hcand_pt']) )
+  cutlist.append( fm.addmask('pt_g650'    ,'Hcand_pt>650'                 ,['Hcand_pt']) )
+  return cutlist
 
 def main():
   path    = '/afs/cern.ch/work/f/fcelli/private/ATLAS/HbbJetMiniNtuples/C2Studies/200618/'
   cols    = ['w','Hcand_m','Hcand_pt','Hcand_C2','Hcand_D2','Hcand_tau21','Hcand_tau32']
-  reglist = ['srl','srs']
-  cutlist = [None,'m_l100','m_g100l150','m_g150','pt_l450','pt_g450l650','pt_g650']
+  reglist = ['srl','srs'] 
   extlist = ['.pdf','.png']
   hmodels = []
   hmodels.append( h1DModel( var = 'Hcand_C2',
@@ -64,10 +65,11 @@ def main():
                             columns  = cols,
                             dropna   = True ) 
 
-    ApplyCuts(fm_higgs)
+    cutlist = ApplyCuts(fm_higgs)
     ApplyCuts(fm_ttbar)
     ApplyCuts(fm_QCD)
     ApplyCuts(fm_Vqq)
+    cutlist = [None] + cutlist
  
     for cut in cutlist:
       for hmod in hmodels:
