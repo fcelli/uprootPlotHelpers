@@ -49,7 +49,7 @@ def MakeTextBox():
   if sim:
     textbox += 'Simulation '
   if ecom is not None:
-    textbox += ('$\sqrt{'+str(ecom)+'}TeV$ ')
+    textbox += ('$\sqrt{s}='+str(ecom)+'$TeV ')
   if lumi is not None:
     textbox += (str(lumi)+'$fb^{-1}$')
   if text is not None:
