@@ -2,6 +2,7 @@ import copy, warnings
 import matplotlib.pyplot as plt
 import numpy as np
 from helpers import styletools
+from helpers import textboxtools
 
 def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
   '''
@@ -54,6 +55,14 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
   ax.set_ylim(kwargs['yrange'])
   ax.legend()
 
+  # make text box
+  if kwargs['textbox']:
+    textstr   = textboxtools.MakeTextBox()
+    xpos,ypos = textboxtools.pos
+    ax.text(xpos, ypos, textstr, transform=ax.transAxes, fontsize=textboxtools.fontsize,
+        verticalalignment='top') 
+
+  # make ratio plot
   ratiodata  = {}
   if len(tuplelist)>1 and kwargs['makeratio']:
     for i in range(0,len(tuplelist)):
@@ -180,5 +189,5 @@ def ParseArgs(tuplelist,kwargs):
   if 'ratiorange' not in kwargs: kwargs['ratiorange'] = [None,None]
   if 'ratiolabel' not in kwargs: kwargs['ratiolabel'] = ''
   if 'rationydiv' not in kwargs: kwargs['rationydiv'] = 4
-  if 'text'       not in kwargs: kwargs['text']       = ''
+  if 'textbox'    not in kwargs: kwargs['textbox']    = False
   return tuplelist,kwargs
