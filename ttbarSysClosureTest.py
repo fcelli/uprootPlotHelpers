@@ -2,6 +2,7 @@ from helpers.filetools  import FileManager
 from helpers.modeltools import h1DModel
 from helpers.plottools  import Histos1D
 import matplotlib.pyplot as plt
+import helpers.textboxtools as tb
 
 def ApplySelections(fm):
   cutlist = []
@@ -20,12 +21,20 @@ def ApplySelections(fm):
 def main():
 
   basedir = '/afs/cern.ch/work/f/fcelli/private/ATLAS/HbbJetMiniNtuples/recoNtuples'
-  tag     = '12'
+  tag     = '200727'
   syslist = ['PowHer','MG5Py8']
   reglist = ['srl','srs','vrl','vrs']
   columns = ['w','Hcand_m','Hcand_pt','category']
   extlist = ['.pdf','.png']
 
+  # define textbox
+  tb.Experiment('ATLAS')
+  tb.Internal(True)
+  tb.Simulation(True)
+  tb.Ecom(13)
+  tb.Luminosity(136.0)
+  
+  # define histogram models
   hmod_m  = h1DModel( var    = 'Hcand_m',
                       nbins  = 44,
                       xlow   = 60,
@@ -44,6 +53,8 @@ def main():
 
   for sys in syslist:
     for reg in reglist:
+
+      tb.text = reg.upper()
 
       fm_PowPy8 = FileManager( filename = '{}/ttbar_allhad_PowPy8_r{}/{}/ttbar_allhad_PowPy8.root'.format(basedir,sys,tag),
                                treename = reg+'/outTree',
@@ -69,16 +80,17 @@ def main():
                      (fm_PowHer,{'weight':'w'          ,'label':'fullsim (PowHer)'   }) ],
                     hmod,
                     maskname   = cut,
-                    ratiorange = [0,2],
+                    ratiorange = [0.5,1.5],
                     ratio      = 0,
-                    ratiolabel = 'fs/rw' )
+                    ratiolabel = 'fs/rw',
+                    textbox    = True )
 
           for ext in extlist:
             figname =''
             if cut == None:
-              figname = '{}_{}{}'.format(reg,hmod.var,ext)
+              figname = '{}_{}_{}{}'.format(sys,reg,hmod.var,ext)
             else:
-              figname = '{}_{}_{}{}'.format(reg,cut,hmod.var,ext)
+              figname = '{}_{}_{}_{}{}'.format(sys,reg,cut,hmod.var,ext)
             print('Saving figure: '+figname)
             plt.savefig('./'+figname)
 
