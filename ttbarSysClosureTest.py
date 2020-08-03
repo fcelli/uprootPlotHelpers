@@ -60,7 +60,7 @@ def main():
                                treename = reg+'/outTree',
                                columns  = columns+['reweight'],
                                dropna   = False )
-      fm_PowHer = FileManager( filename = '{}/ttbar_allhad_{}/{}/ttbar_allhad_{}.root'.format(basedir,sys,tag,sys),
+      fm_Sys    = FileManager( filename = '{}/ttbar_allhad_{}/{}/ttbar_allhad_{}.root'.format(basedir,sys,tag,sys),
                                treename = reg+'/outTree',
                                columns  = columns,
                                dropna   = False )
@@ -68,7 +68,7 @@ def main():
       fm_PowPy8.df['full_weight'] = fm_PowPy8.df.w * fm_PowPy8.df.reweight
 
       cutlist = ApplySelections(fm_PowPy8)
-      ApplySelections(fm_PowHer)
+      ApplySelections(fm_Sys)
       cutlist = [None]+cutlist
 
       for hmod in hmodlist:
@@ -76,8 +76,8 @@ def main():
           if cut is not None:
             if hmod.var in cut: continue
             if len(cut)==3 and cut[-1] != reg[-1]: continue
-          Histos1D( [(fm_PowPy8,{'weight':'full_weight','label':'reweighted (PowPy8)'}),
-                     (fm_PowHer,{'weight':'w'          ,'label':'fullsim (PowHer)'   }) ],
+          Histos1D( [(fm_PowPy8,{'weight':'full_weight','label':'reweighted (PowPy8)'     }),
+                     (fm_Sys   ,{'weight':'w'          ,'label':'fullsim ({})'.format(sys)}) ],
                     hmod,
                     maskname   = cut,
                     ratiorange = [0.5,1.5],
