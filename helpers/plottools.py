@@ -18,7 +18,7 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
                                        figsize     = styletools.figsize,
                                        sharex      = True,
                                        gridspec_kw = { 'hspace'       : 0,
-                                                       'height_ratios': [4,1] } ) 
+                                                       'height_ratios': kwargs['heightratios'] } ) 
   else:
     fig, ax = plt.subplots(figsize=styletools.figsize)
 
@@ -181,13 +181,14 @@ def ParseArgs(tuplelist,kwargs):
     if 'label'  not in fmopt[1]: fmopt[1]['label']  = ''
     if 'color'  not in fmopt[1]: fmopt[1]['color']  = 'C'+str(tuplelist.index(fmopt))
     if 'weight' not in fmopt[1]: fmopt[1]['weight'] = None
-  if 'norm'       not in kwargs: kwargs['norm']       = False
-  if 'xrange'     not in kwargs: kwargs['xrange']     = [None,None]
-  if 'yrange'     not in kwargs: kwargs['yrange']     = [0,None]
-  if 'ratio'      not in kwargs: kwargs['ratio']      = 0
-  if 'makeratio'  not in kwargs: kwargs['makeratio']  = True
-  if 'ratiorange' not in kwargs: kwargs['ratiorange'] = [None,None]
-  if 'ratiolabel' not in kwargs: kwargs['ratiolabel'] = ''
-  if 'rationydiv' not in kwargs: kwargs['rationydiv'] = 4
-  if 'textbox'    not in kwargs: kwargs['textbox']    = False
+  if 'norm'         not in kwargs: kwargs['norm']         = False
+  if 'xrange'       not in kwargs: kwargs['xrange']       = [None,None]
+  if 'yrange'       not in kwargs: kwargs['yrange']       = [0,None]
+  if 'ratio'        not in kwargs: kwargs['ratio']        = 0
+  if 'makeratio'    not in kwargs: kwargs['makeratio']    = True
+  if 'ratiorange'   not in kwargs: kwargs['ratiorange']   = [None,None]
+  if 'ratiolabel'   not in kwargs: kwargs['ratiolabel']   = ''
+  if 'rationydiv'   not in kwargs: kwargs['rationydiv']   = 4
+  if 'heightratios' not in kwargs: kwargs['heightratios'] = [3,1]
+  if 'textbox'      not in kwargs: kwargs['textbox']      = False
   return tuplelist,kwargs
