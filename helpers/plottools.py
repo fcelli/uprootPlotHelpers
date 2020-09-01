@@ -3,11 +3,39 @@ import matplotlib.pyplot as plt
 import numpy as np
 from helpers import styletools
 from helpers import textboxtools
+from helpers import modeltools
 
-def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
+def Histos1D(tuplelist,model,maskname=None,**kwargs):
   '''
   tuplelist format: [(FileManager,{opt1:val1, opt2:val2, ...})]
   '''
+
+  nbins  = None
+  xlow   = None
+  xhigh  = None
+  xlabel = None
+  ylabel = None
+  if not isinstance(model,list):
+    if not isinstance(model,modeltools.h1DModel):
+      raise ValueError('Argument model must be instance of modeltools.h1DModel.')
+    nbins  = model.nbins
+    xlow   = model.xlow
+    xhigh  = model.xhigh
+    xlabel = model.xlabel
+    ylabel = model.ylabel
+  else:
+    if len(model)==0: raise ValueError('Argument model must be list of modeltools.h1DModel.')
+    if len(model)!=len(tuplelist): raise ValueError('Arguments tuplelist and model have different size.') 
+    for hmod in model:
+      if not isinstance(hmod, modeltools.h1DModel): raise ValueError('Argument model must be list of modeltools.h1DModel.')
+      if (hmod.nbins!=model[0].nbins) or (hmod.xlow!=model[0].xlow) or (hmod.xhigh!=model[0].xhigh):
+        raise ValueError('Models in the list must share the same nbins, xlow and xhigh.')
+    nbins  = model[0].nbins
+    xlow   = model[0].xlow
+    xhigh  = model[0].xhigh
+    xlabel = model[0].xlabel
+    ylabel = model[0].ylabel
+
   tuplelist,kwargs = ParseArgs(tuplelist,kwargs)
 
   fig = None
@@ -25,9 +53,13 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
   styletools.StyleHistos1D(ax,axratio)
 
   nlist       = []
-  binslist    = [] 
+  binslist    = []
   for fmopt in tuplelist:
-    data   = fmopt[0].df[hmod.var]
+    var = None
+    idx = tuplelist.index(fmopt)
+    if not isinstance(model,list): var = model.var
+    else: var = model[idx].var
+    data   = fmopt[0].df[var]
     weight = fmopt[1]['weight']
     if weight is not None:
       weight = fmopt[0].df[weight]
@@ -37,8 +69,8 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
         weight = weight[fmopt[0].df[maskname]]
     n,bins,_ = ax.hist( data,
                         weights  = weight,
-                        bins     = hmod.nbins,
-                        range    = (hmod.xlow,hmod.xhigh),
+                        bins     = nbins,
+                        range    = (xlow,xhigh),
                         color    = fmopt[1]['color'],
                         histtype = fmopt[1]['opt'],
                         label    = fmopt[1]['label'],
@@ -46,10 +78,10 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
     nlist.append(n)
     binslist.append(bins)
 
-  plt.xlabel(hmod.xlabel,fontsize=14)
-  ax.set_ylabel(hmod.ylabel,fontsize=14)
+  plt.xlabel(xlabel,fontsize=14)
+  ax.set_ylabel(ylabel,fontsize=14)
   if kwargs['xrange'] == [None,None]:
-    ax.set_xlim([hmod.xlow,hmod.xhigh])
+    ax.set_xlim([xlow,xhigh])
   else:
     ax.set_xlim(kwargs['xrange'])
   ax.set_ylim(kwargs['yrange'])
@@ -79,7 +111,7 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
                     color    = tuplelist[idx][1]['color'],
                     histtype = 'step' )
     if kwargs['xrange'] == [None,None]: 
-      axratio.set_xlim([hmod.xlow,hmod.xhigh])
+      axratio.set_xlim([xlow,xhigh])
     else:
       axratio.set_xlim(kwargs['xrange'])
     axratio.set_ylim([kwargs['ratiorange'][0],kwargs['ratiorange'][1]])

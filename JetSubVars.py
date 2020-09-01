@@ -78,7 +78,7 @@ def main():
                     (fm_ttbar,{'label':'ttbar','weight':'w'}),
                     (fm_QCD  ,{'label':'QCD'  ,'weight':'w'}),
                     (fm_Vqq  ,{'label':'Vqq'  ,'weight':'w'}) ],
-                  hmod      = hmod,
+                  model     = hmod,
                   norm      = True,
                   maskname  = cut,
                   makeratio = False )

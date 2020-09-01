@@ -78,7 +78,7 @@ def main():
             if len(cut)==3 and cut[-1] != reg[-1]: continue
           Histos1D( [(fm_PowPy8,{'weight':'full_weight','label':'reweighted (PowPy8)'     }),
                      (fm_Sys   ,{'weight':'w'          ,'label':'fullsim ({})'.format(sys)}) ],
-                    hmod,
+                    model      = hmod,
                     maskname   = cut,
                     ratiorange = [0.5,1.5],
                     ratio      = 0,
