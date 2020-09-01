@@ -35,19 +35,17 @@ def main():
   tb.Luminosity(136.0)
   
   # define histogram models
-  hmod_m  = h1DModel( var    = 'Hcand_m',
-                      nbins  = 44,
-                      xlow   = 60,
-                      xhigh  = 280,
-                      xlabel = 'Large-R Jet Mass [GeV]',
-                      ylabel = 'Events' )
+  hmod_m  = h1DModel( var     = 'Hcand_m',
+                      nbins   = 44,
+                      x_range = (60,280),
+                      xlabel  = 'Large-R Jet Mass [GeV]',
+                      ylabel  = 'Events' )
 
-  hmod_pt = h1DModel( var    = 'Hcand_pt',
-                      nbins  = 95,
-                      xlow   = 250,
-                      xhigh  = 1200,
-                      xlabel = 'Large-R Jet $p_{T}$ [GeV]',
-                      ylabel = 'Events' )
+  hmod_pt = h1DModel( var     = 'Hcand_pt',
+                      nbins   = 95,
+                      x_range = (250,1200),
+                      xlabel  = 'Large-R Jet $p_{T}$ [GeV]',
+                      ylabel  = 'Events' )
 
   hmodlist = [hmod_m, hmod_pt]
 
@@ -78,7 +76,7 @@ def main():
             if len(cut)==3 and cut[-1] != reg[-1]: continue
           Histos1D( [(fm_PowPy8,{'weight':'full_weight','label':'reweighted (PowPy8)'     }),
                      (fm_Sys   ,{'weight':'w'          ,'label':'fullsim ({})'.format(sys)}) ],
-                    hmod,
+                    model      = hmod,
                     maskname   = cut,
                     ratiorange = [0.5,1.5],
                     ratio      = 0,
@@ -99,4 +97,3 @@ def main():
 
 if __name__ == '__main__':
   main()
-

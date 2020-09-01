@@ -3,11 +3,36 @@ import matplotlib.pyplot as plt
 import numpy as np
 from helpers import styletools
 from helpers import textboxtools
+from helpers import modeltools
 
-def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
+def Histos1D(tuplelist,model,maskname=None,**kwargs):
   '''
   tuplelist format: [(FileManager,{opt1:val1, opt2:val2, ...})]
   '''
+
+  nbins   = None
+  x_range = None
+  xlabel  = None
+  ylabel  = None
+  if not isinstance(model,list):
+    if not isinstance(model,modeltools.h1DModel):
+      raise ValueError('Argument model must be instance of modeltools.h1DModel.')
+    nbins   = model.nbins
+    x_range = model.x_range
+    xlabel  = model.xlabel
+    ylabel  = model.ylabel
+  else:
+    if len(model)==0: raise ValueError('Argument model must be list of modeltools.h1DModel.')
+    if len(model)!=len(tuplelist): raise ValueError('Arguments tuplelist and model have different size.') 
+    for hmod in model:
+      if not isinstance(hmod, modeltools.h1DModel): raise ValueError('Argument model must be list of modeltools.h1DModel.')
+      if (hmod.nbins!=model[0].nbins) or (hmod.x_range!=model[0].x_range):
+        raise ValueError('Models in the list must share the same nbins and x_range.')
+    nbins   = model[0].nbins
+    x_range = model[0].x_range
+    xlabel  = model[0].xlabel
+    ylabel  = model[0].ylabel
+
   tuplelist,kwargs = ParseArgs(tuplelist,kwargs)
 
   fig = None
@@ -25,9 +50,13 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
   styletools.StyleHistos1D(ax,axratio)
 
   nlist       = []
-  binslist    = [] 
+  binslist    = []
   for fmopt in tuplelist:
-    data   = fmopt[0].df[hmod.var]
+    var = None
+    idx = tuplelist.index(fmopt)
+    if not isinstance(model,list): var = model.var
+    else: var = model[idx].var
+    data   = fmopt[0].df[var]
     weight = fmopt[1]['weight']
     if weight is not None:
       weight = fmopt[0].df[weight]
@@ -37,8 +66,8 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
         weight = weight[fmopt[0].df[maskname]]
     n,bins,_ = ax.hist( data,
                         weights  = weight,
-                        bins     = hmod.nbins,
-                        range    = (hmod.xlow,hmod.xhigh),
+                        bins     = nbins,
+                        range    = x_range,
                         color    = fmopt[1]['color'],
                         histtype = fmopt[1]['opt'],
                         label    = fmopt[1]['label'],
@@ -46,10 +75,10 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
     nlist.append(n)
     binslist.append(bins)
 
-  plt.xlabel(hmod.xlabel,fontsize=14)
-  ax.set_ylabel(hmod.ylabel,fontsize=14)
+  plt.xlabel(xlabel,fontsize=14)
+  ax.set_ylabel(ylabel,fontsize=14)
   if kwargs['xrange'] == [None,None]:
-    ax.set_xlim([hmod.xlow,hmod.xhigh])
+    ax.set_xlim(x_range)
   else:
     ax.set_xlim(kwargs['xrange'])
   ax.set_ylim(kwargs['yrange'])
@@ -79,7 +108,7 @@ def Histos1D(tuplelist,hmod,maskname=None,**kwargs):
                     color    = tuplelist[idx][1]['color'],
                     histtype = 'step' )
     if kwargs['xrange'] == [None,None]: 
-      axratio.set_xlim([hmod.xlow,hmod.xhigh])
+      axratio.set_xlim(x_range)
     else:
       axratio.set_xlim(kwargs['xrange'])
     axratio.set_ylim([kwargs['ratiorange'][0],kwargs['ratiorange'][1]])
@@ -106,8 +135,8 @@ def ScatterPlot(tuplelist,xhmod,yhmod,marker='.',s=1,alpha=1,maskname=None,**kwa
                 alpha  = alpha )
   plt.xlabel(xhmod.xlabel,fontsize=14)
   plt.ylabel(yhmod.xlabel,fontsize=14)
-  ax.set_xlim([xhmod.xlow,xhmod.xhigh])
-  ax.set_ylim([yhmod.xlow,yhmod.xhigh])
+  ax.set_xlim(xhmod.x_range)
+  ax.set_ylim(yhmod.x_range)
   plt.legend() 
 
 def ContourPlot(tuplelist,xhmod,yhmod,nlevels=10,alpha=1,maskname=None,**kwargs):
@@ -144,7 +173,7 @@ def ContourPlot(tuplelist,xhmod,yhmod,nlevels=10,alpha=1,maskname=None,**kwargs)
                                  y       = ydata,
                                  weights = weight,
                                  bins    = [xhmod.nbins,yhmod.nbins],
-                                 range   = [[xhmod.xlow,xhmod.xhigh],[yhmod.xlow,yhmod.xhigh]],
+                                 range   = [xhmod.x_range,yhmod.x_range],
                                  density = kwargs['norm'] )
     # create contour lines from h2d counts
     m = np.amax(counts)
@@ -155,7 +184,7 @@ def ContourPlot(tuplelist,xhmod,yhmod,nlevels=10,alpha=1,maskname=None,**kwargs)
     c = plt.contour( counts.transpose(),
                      levels = levels,
                      colors = fmopt[1]['color'], 
-                     extent = [xhmod.xlow,xhmod.xhigh,yhmod.xlow,yhmod.xhigh],
+                     extent = [xhmod.x_range[0],xhmod.x_range[1],yhmod.x_range[0],yhmod.x_range[1]],
                      alpha  = alpha ) 
     # handle legend entries
     lelm,_ = c.legend_elements()
@@ -164,8 +193,8 @@ def ContourPlot(tuplelist,xhmod,yhmod,nlevels=10,alpha=1,maskname=None,**kwargs)
 
   plt.xlabel(xhmod.xlabel,fontsize=14)
   plt.ylabel(yhmod.xlabel,fontsize=14)
-  ax.set_xlim([xhmod.xlow,xhmod.xhigh])
-  ax.set_ylim([yhmod.xlow,yhmod.xhigh])
+  ax.set_xlim(xhmod.x_range)
+  ax.set_ylim(yhmod.x_range)
   ax.legend(lelms, labels) 
 
 def ParseArgs(tuplelist,kwargs):

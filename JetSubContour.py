@@ -10,25 +10,22 @@ def main():
   extlist = ['.pdf','.png']
   hmodels = []
   hmodels.append( h1DModel( var = 'Hcand_C2',
-                            nbins  = 50,
-                            xlow   = 0,
-                            xhigh  = 0.5,
-                            xlabel = 'Large-R Jet C2',
-                            ylabel = 'Events' ) )
+                            nbins   = 50,
+                            x_range = (0,0.5),
+                            xlabel  = 'Large-R Jet C2',
+                            ylabel  = 'Events' ) )
 
-  hmodels.append( h1DModel( var    = 'Hcand_D2',
-                            nbins  = 50,
-                            xlow   = 0,
-                            xhigh  = 4,
-                            xlabel = 'Large-R Jet D2',
-                            ylabel = 'Events' ) )
+  hmodels.append( h1DModel( var     = 'Hcand_D2',
+                            nbins   = 50,
+                            x_range = (0,4),
+                            xlabel  = 'Large-R Jet D2',
+                            ylabel  = 'Events' ) )
 
-  hmodels.append( h1DModel( var    = 'Hcand_tau21',
-                            nbins  = 50,
-                            xlow   = 0,
-                            xhigh  = 1,
-                            xlabel = 'Large-R Jet $\\tau_{21}$',
-                            ylabel = 'Events' ) )
+  hmodels.append( h1DModel( var     = 'Hcand_tau21',
+                            nbins   = 50,
+                            x_range = (0,1),
+                            xlabel  = 'Large-R Jet $\\tau_{21}$',
+                            ylabel  = 'Events' ) )
 
   for reg in reglist:
     fm_higgs = FileManager( filename = path+'Higgs/Higgs.root',
