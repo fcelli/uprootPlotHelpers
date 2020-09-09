@@ -16,16 +16,16 @@ def Histos1D(tuplelist,model,maskname=None,**kwargs):
   ylabel  = None
   if not isinstance(model,list):
     if not isinstance(model,modeltools.h1DModel):
-      raise ValueError('Argument model must be instance of modeltools.h1DModel.')
+      raise TypeError('Argument model must be instance of modeltools.h1DModel.')
     nbins   = model.nbins
     x_range = model.x_range
     xlabel  = model.xlabel
     ylabel  = model.ylabel
   else:
-    if len(model)==0: raise ValueError('Argument model must be list of modeltools.h1DModel.')
+    if len(model)==0: raise TypeError('Argument model must be list of modeltools.h1DModel.')
     if len(model)!=len(tuplelist): raise ValueError('Arguments tuplelist and model have different size.') 
     for hmod in model:
-      if not isinstance(hmod, modeltools.h1DModel): raise ValueError('Argument model must be list of modeltools.h1DModel.')
+      if not isinstance(hmod, modeltools.h1DModel): raise TypeError('Argument model must be list of modeltools.h1DModel.')
       if (hmod.nbins!=model[0].nbins) or (hmod.x_range!=model[0].x_range):
         raise ValueError('Models in the list must share the same nbins and x_range.')
     nbins   = model[0].nbins
@@ -75,13 +75,14 @@ def Histos1D(tuplelist,model,maskname=None,**kwargs):
     nlist.append(n)
     binslist.append(bins)
 
+  if kwargs['logy']: ax.set_yscale('log')
   plt.xlabel(xlabel,fontsize=14)
   ax.set_ylabel(ylabel,fontsize=14)
   if kwargs['xrange'] == [None,None]:
     ax.set_xlim(x_range)
   else:
     ax.set_xlim(kwargs['xrange'])
-  ax.set_ylim(kwargs['yrange'])
+  ax.set_ylim(kwargs['yrange']) 
   ax.legend()
 
   # make text box
@@ -212,7 +213,8 @@ def ParseArgs(tuplelist,kwargs):
     if 'weight' not in fmopt[1]: fmopt[1]['weight'] = None
   if 'norm'         not in kwargs: kwargs['norm']         = False
   if 'xrange'       not in kwargs: kwargs['xrange']       = [None,None]
-  if 'yrange'       not in kwargs: kwargs['yrange']       = [0,None]
+  if 'yrange'       not in kwargs: kwargs['yrange']       = [None,None]
+  if 'logy'         not in kwargs: kwargs['logy']         = False
   if 'ratio'        not in kwargs: kwargs['ratio']        = 0
   if 'makeratio'    not in kwargs: kwargs['makeratio']    = True
   if 'ratiorange'   not in kwargs: kwargs['ratiorange']   = [None,None]
