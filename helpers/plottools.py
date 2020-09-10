@@ -118,6 +118,13 @@ def Histos1D(tuplelist,model,maskname=None,**kwargs):
     axratio.yaxis.set_ticks(np.arange(ylow, yhigh, tick_step))
     axratio.set_ylabel(kwargs['ratiolabel'],fontsize=12)
 
+  # save plot
+  if kwargs['saveas'] is not None:
+    for ext in kwargs['ext']:
+      figname = '{}{}'.format(kwargs['saveas'],ext)
+      print('Saving figure: '+figname)
+      plt.savefig(figname)
+
 def ScatterPlot(tuplelist,xhmod,yhmod,marker='.',s=1,alpha=1,maskname=None,**kwargs):
   tuplelist,kwargs = ParseArgs(tuplelist,kwargs)
   fig, ax = plt.subplots(figsize=styletools.figsize) 
@@ -222,4 +229,6 @@ def ParseArgs(tuplelist,kwargs):
   if 'rationydiv'   not in kwargs: kwargs['rationydiv']   = 4
   if 'heightratios' not in kwargs: kwargs['heightratios'] = [3,1]
   if 'textbox'      not in kwargs: kwargs['textbox']      = False
+  if 'saveas'       not in kwargs: kwargs['saveas']       = None
+  if 'ext'          not in kwargs: kwargs['ext']          = ['.pdf','.png']
   return tuplelist,kwargs
