@@ -1,9 +1,12 @@
-import copy, warnings
 import matplotlib.pyplot as plt
 import numpy as np
-from helpers import styletools
-from helpers import textboxtools
-from helpers import modeltools
+import copy, warnings
+
+from uprootPlotHelpers import styletools
+from uprootPlotHelpers import textboxtools
+from uprootPlotHelpers import modeltools
+
+__all__ = ['Histos1D', 'ScatterPlot', 'ContourPlot']
 
 def Histos1D(tuplelist,model,maskname=None,**kwargs):
   '''

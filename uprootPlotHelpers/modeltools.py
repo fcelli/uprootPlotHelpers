@@ -1,3 +1,5 @@
+__all__ = ['h1DModel']
+
 class h1DModel:
   def __init__( self,
                 var,

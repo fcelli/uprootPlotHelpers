@@ -1,5 +1,7 @@
 import uproot, sys
 
+__all__ = ['FileManager']
+
 class FileManager:
   def __init__(self,filename=None,treename=None,columns=None,dropna=False):
     self.filename = filename
