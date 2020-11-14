@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name = 'urph',
     version = '0.1',
-    description = '',
+    description = 'urph is a package build around uproot that makes plotting tasks easy.',
     url = '',
     author = 'fcelli',
     author_email = 'fedecel93@gmail.com',
