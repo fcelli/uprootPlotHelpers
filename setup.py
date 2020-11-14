@@ -1,13 +1,13 @@
 from setuptools import setup
   
 setup(
-    name="uprootPlotHelpers",
-    version="",
+    name="urph",
+    version="0.1",
     description="",
     url="",
     author="fcelli",
     author_email="fedecel93@gmail.com",
-    packages=["uprootPlotHelpers"],
+    packages=['urph','urph.plot_tools'],
     install_requires=["uproot", "numpy", "matplotlib", "pandas"],
     license="",
 )
