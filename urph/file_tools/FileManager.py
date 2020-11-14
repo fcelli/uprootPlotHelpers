@@ -1,6 +1,4 @@
-import uproot, sys
-
-__all__ = ['FileManager']
+import uproot
 
 class FileManager:
   def __init__(self,filename=None,treename=None,columns=None,dropna=False):
@@ -18,15 +16,13 @@ class FileManager:
 
   def open(self,filename):
     self.file = uproot.open(filename)
-    if self.file==None:
-      print('Error: no file found at {}'.format(filename))
-      sys.exit()
+    if self.file is None:
+      raise FileNotFoundError('Error: no file found at {}'.format(filename))
 
   def settree(self,treename):
     self.tree = self.file[treename]
-    if self.tree==None:
-      print('Error: no tree found with name {}'.format(treename))
-      sys.exit()
+    if self.tree is None:
+      raise KeyError('Error: no tree found with name {}'.format(treename))
 
   def makedf(self,columns=None):
     if columns is None:
