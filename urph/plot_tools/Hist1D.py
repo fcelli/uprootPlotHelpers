@@ -7,25 +7,16 @@ class Hist1D(PlotInterface):
     """
 
     def __init__(self, inputs, **kwargs):
+        """Instantiates a Hist1D object.
+
+        Args:
+            inputs ( [(FileManager, {'opt1':'val1','opt2':'val2'})] ): tuple (or list of tuples) describing input datasets and options.
         """
-        Arguments:
-            - inputs: tuple (or list of tuples) of type (FileManager, {'opt1':'val1','opt2':'val2'})
-        """
-
-        self._inputs = inputs
-        self._kwargs = kwargs
-
-        self._fig = None
-        self._ax = None
-        self._axratio = None
-
+        
         self._run()
-        self._save_as(self._kwargs['saveas'])
-        self._show(self._kwargs['show'])
 
     def _check_args(self) -> None:
-        """
-        Check arguments type
+        """Checks arguments type
         """
         if isinstance(self._inputs,list):
             if len(self._inputs) == 0: raise TypeError('Argument \'inputs\' is empty.')
@@ -35,58 +26,63 @@ class Hist1D(PlotInterface):
 
 
     def _set_default_opts(self) -> None:
+        """Sets default histogram options.
         """
-        Function for setting default histogram options.
-        """
-        def add_default_opt(opt_dict : dict, name : str, value):
-            if name not in opt_dict: opt_dict.update({name:value})
-
+        
         # Set general default options
-        add_default_opt(self._kwargs, 'var'         , None)
-        add_default_opt(self._kwargs, 'weight'      , None)
-        add_default_opt(self._kwargs, 'nbins'       , 10)
-        add_default_opt(self._kwargs, 'xrange'      , (0,10))
-        add_default_opt(self._kwargs, 'yrange'      , (None,None))
-        add_default_opt(self._kwargs, 'xlabel'      , '')
-        add_default_opt(self._kwargs, 'ylabel'      , '')
-        add_default_opt(self._kwargs, 'mask'        , None)
-        add_default_opt(self._kwargs, 'norm'        , False)
-        add_default_opt(self._kwargs, 'logy'        , False)
-        add_default_opt(self._kwargs, 'ratio'       , 0)
-        add_default_opt(self._kwargs, 'makeratio'   , True)
-        add_default_opt(self._kwargs, 'ratiorange'  , (None,None))
-        add_default_opt(self._kwargs, 'ratiolabel'  , '')
-        add_default_opt(self._kwargs, 'rationydiv'  , 4)
-        add_default_opt(self._kwargs, 'heightratios', [3,1])
-        add_default_opt(self._kwargs, 'textbox'     , False)
-        add_default_opt(self._kwargs, 'saveas'      , None)
-        add_default_opt(self._kwargs, 'show'        , True)
+        self._add_default_options(
+            base   = self._options,
+            new    = {
+                # Histogram options
+                'var'           : None,
+                'weight'        : None,
+                'nbins'         : 10,
+                'xrange'        : (0,10),
+                'yrange'        : (None,None),
+                'xlabel'        : '',
+                'ylabel'        : '',
+                'mask'          : None,
+                'norm'          : False,
+                'logy'          : False,
+                # Ratio plot
+                'heightratios'  : [3,1],
+                'ratio'         : 0,
+                'makeratio'     : True,
+                'ratiorange'    : (None,None),
+                'ratiolabel'    : '',
+                'rationydiv'    : 4,
+            }
+        )
 
         # Set input-specific default options
         for ipt in self._inputs:
-            add_default_opt(ipt[1], 'opt'   , 'step')
-            add_default_opt(ipt[1], 'label' , '')
-            add_default_opt(ipt[1], 'color' , 'C'+str(self._inputs.index(ipt)))
-            add_default_opt(ipt[1], 'var'   , self._kwargs['var'])
-            add_default_opt(ipt[1], 'weight', self._kwargs['weight'])
-            add_default_opt(ipt[1], 'nbins' , self._kwargs['nbins'])
-            add_default_opt(ipt[1], 'mask'  , self._kwargs['mask'])
+            self._add_default_options(
+                base   = ipt[1],
+                new    = {
+                    'opt'      : 'step',
+                    'label'    : '',
+                    'color'    : 'C'+str(self._inputs.index(ipt)),
+                    'var'      : self._options['var'],
+                    'weight'   : self._options['weight'],
+                    'nbins'    : self._options['nbins'],
+                    'mask'     : self._options['mask']
+                }
+            )
 
     def _create_figure(self) -> None:
-        """
-        Creates the canvas where the plots will be drawn.
+        """Creates the canvas where the plots will be drawn.
         """
         #import styletools #FIXME !!!
         from urph import styletools
         #TODO make a function to handle style and textbox options
 
-        if len(self._inputs)>1 and self._kwargs['makeratio']: #FIXME or if we are plotting more than one variable from the same sample!
+        if len(self._inputs)>1 and self._options['makeratio']:
             self._fig, (self._ax, self._axratio) = plt.subplots(
                 2,
                 figsize     = styletools.figsize,
                 sharex      = True,
                 gridspec_kw = { 'hspace'       : 0,
-                                'height_ratios': self._kwargs['heightratios'] } ) 
+                                'height_ratios': self._options['heightratios'] } ) 
         else:
             self._fig, self._ax = plt.subplots(figsize=styletools.figsize)
 
@@ -94,10 +90,9 @@ class Hist1D(PlotInterface):
         styletools.StyleHistos1D(self._ax,self._axratio)
 
     def _draw(self) -> None:
+        """Draws plots on the canvas
         """
-        Draws plots on the canvas
-        """
-        def _create_hist(ipt, var): #-> tuple(list, list):
+        def _create_hist(ipt, var):
             # Define data
             data = ipt[0].df[var]
             # Define weight
@@ -125,11 +120,11 @@ class Hist1D(PlotInterface):
                 data,
                 weights  = weight,
                 bins     = ipt[1]['nbins'],
-                range    = self._kwargs['xrange'],
+                range    = self._options['xrange'],
                 color    = ipt[1]['color'],
                 histtype = ipt[1]['opt'],
                 label    = ipt[1]['label'],
-                density  = self._kwargs['norm']
+                density  = self._options['norm']
             )
             return (n, bins)
         
@@ -148,35 +143,34 @@ class Hist1D(PlotInterface):
             self._bin_edges.append(bins)
 
         # Log scale
-        if self._kwargs['logy']: self._ax.set_yscale('log')
+        if self._options['logy']: self._ax.set_yscale('log')
 
         # Axes labels
-        plt.xlabel(self._kwargs['xlabel'],fontsize=14)
-        self._ax.set_ylabel(self._kwargs['ylabel'],fontsize=14)
+        plt.xlabel(self._options['xlabel'],fontsize=14)
+        self._ax.set_ylabel(self._options['ylabel'],fontsize=14)
 
         # Axes limits
-        self._ax.set_xlim(self._kwargs['xrange'])
-        self._ax.set_ylim(self._kwargs['yrange'])
+        self._ax.set_xlim(self._options['xrange'])
+        self._ax.set_ylim(self._options['yrange'])
 
         # Draw legend
         self._ax.legend()
 
     def _hook(self):
-        """
-        Draws ratio plots
+        """Draws ratio plots
         """
         #FIXME needed? If so, move to the top
         import warnings
         import numpy as np
         #---------
         ratiodata  = {}
-        if len(self._inputs)>1 and self._kwargs['makeratio']:
+        if len(self._inputs)>1 and self._options['makeratio']:
             for i in range(0,len(self._inputs)):
-                if i == self._kwargs['ratio']: continue
+                if i == self._options['ratio']: continue
                 with warnings.catch_warnings():
                     warnings.filterwarnings('ignore', 'divide by zero encountered in true_divide', RuntimeWarning)
                     warnings.filterwarnings('ignore', 'invalid value encountered in true_divide' , RuntimeWarning) 
-                    ratiodata[i] = np.array(self._bin_contents[i])/np.array(self._bin_contents[self._kwargs['ratio']]) 
+                    ratiodata[i] = np.array(self._bin_contents[i])/np.array(self._bin_contents[self._options['ratio']]) 
             for idx in ratiodata:
                 maskfinite = [ (not np.isnan(x)) and (x!=np.inf) for x in ratiodata[idx] ] # determine finite ratio values
                 self._axratio.hist(
@@ -187,14 +181,14 @@ class Hist1D(PlotInterface):
                     histtype = 'step'
                 )
             # Set axes limits
-            self._axratio.set_xlim(self._kwargs['xrange'])
-            self._axratio.set_ylim(self._kwargs['ratiorange'])
+            self._axratio.set_xlim(self._options['xrange'])
+            self._axratio.set_ylim(self._options['ratiorange'])
             # Set y axis ticks
             ylow, yhigh = self._axratio.get_ylim()
-            tick_step = float(yhigh-ylow)/self._kwargs['rationydiv']
+            tick_step = float(yhigh-ylow)/self._options['rationydiv']
             self._axratio.yaxis.set_ticks(np.arange(ylow, yhigh, tick_step))
             # Set y axis label
-            self._axratio.set_ylabel(self._kwargs['ratiolabel'],fontsize=12)
+            self._axratio.set_ylabel(self._options['ratiolabel'],fontsize=12)
 
     @property
     def fig(self):
