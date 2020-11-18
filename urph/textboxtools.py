@@ -1,60 +1,30 @@
-experiment = None
-internal   = True
-sim        = True
-ecom       = None
-lumi       = None
-text       = None
-pos        = (0.05,0.95)
-fontsize   = 14
-
-def Experiment(exp):
-  global experiment
-  experiment = exp
-
-def Internal(is_internal):
-  global internal
-  internal = is_internal
-
-def Simulation(is_sim):
-  global sim
-  sim = is_sim
-
-def Ecom(e):
-  global ecom
-  ecom = e
-
-def Luminosity(l):
-  global lumi
-  lumi = l
-
-def Text(t):
-  global text
-  text = t
-
-def Position(x,y):
-  global pos
-  pos = (x,y)
-
-def FontSize(f):
-  global fontsize
-  fontsize = f
-
-def MakeTextBox(): 
-  textbox = ''
-  if experiment is not None:
-    textbox += ('$\mathbf{'+str(experiment)+'}$')
-    if internal:
-      textbox += ' $Internal$'
-    textbox += '\n'
-  if sim:
-    textbox += 'Simulation '
-  if ecom is not None:
-    textbox += ('$\sqrt{s}='+str(ecom)+'$TeV ')
-  if lumi is not None:
-    textbox += (str(lumi)+'$fb^{-1}$')
-  if text is not None:
-    textbox += '\n{}'.format(text)
-  return textbox
+class TextBox:
+    def __init__(self, options):
+    	self.experiment = options['experiment']
+    	self.internal   = options['internal']
+    	self.simulation = options['simulation']
+    	self.ecom       = options['ecom']
+    	self.u_ecom     = options['u_ecom']
+    	self.lumi       = options['lumi']
+    	self.u_lumi     = options['u_lumi']
+    	self.text       = options['tb_addtext']
+    
+    def default(self) -> str:
+        textstr = ''
+        if self.experiment is not None:
+        	textstr += (r'$\mathbf{' + self.experiment + '}$')
+        	if self.internal:
+        		textstr += ' $Internal$'
+        textstr += '\n'
+        if self.simulation:
+            textstr += 'Simulation '
+        if self.ecom is not None:
+            textstr += (r'$\sqrt{s}='+str(self.ecom)+'$'+self.u_ecom+' ')
+        if self.lumi is not None:
+            textstr += (str(self.lumi)+self.u_lumi)
+        if self.text is not None:
+        	textstr += '\n{}'.format(self.text)
+        return textstr
 
 
 

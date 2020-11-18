@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
+from urph.textboxtools import TextBox
 
 class PlotInterface(ABC, object):
     """
@@ -17,9 +18,21 @@ class PlotInterface(ABC, object):
         instance._add_default_options(
             base = instance._options,
             new  = {
+                # Show and Save
                 'show'      : True,
                 'saveas'    : None,
-                'textbox'   : False
+                # Textbox
+                'textbox'       : False,
+                'experiment'    : None,
+                'internal'      : False,
+                'simulation'    : False,
+                'ecom'          : None,
+                'u_ecom'        : 'TeV',
+                'lumi'          : None,
+                'u_lumi'        : '$fb^{-1}$',
+                'tb_addtext'    : None,
+                'tb_pos'        : (0.05,0.95),
+                'tb_fontsize'   : 14
                 }
         )
         instance._options.update(kwargs)
@@ -59,11 +72,26 @@ class PlotInterface(ABC, object):
         self._create_figure()
         self._draw()
         self._hook()
+        if self._options['textbox']:
+            self._draw_textbox()
         if self._options['saveas'] is not None:
             self._save_as(self._options['saveas'])
         if self._options['show']:
             self._show()
 
+    def _draw_textbox(self) -> None:
+        tb      = TextBox(self._options)
+        textstr = tb.default()
+        xpos, ypos  = self._options['tb_pos']
+        self._ax.text(
+            xpos,
+            ypos,
+            textstr,
+            transform   = self._ax.transAxes,
+            fontsize    = self._options['tb_fontsize'],
+            verticalalignment = 'top'
+        )
+        
     def _save_as(self,name) -> None:
         self._fig.savefig(name)
 
