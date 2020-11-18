@@ -60,7 +60,7 @@ class Hist1D(PlotInterface):
         add_default_opt(self._kwargs, 'heightratios', [3,1])
         add_default_opt(self._kwargs, 'textbox'     , False)
         add_default_opt(self._kwargs, 'saveas'      , None)
-        add_default_opt(self._kwargs, 'show'        , False)
+        add_default_opt(self._kwargs, 'show'        , True)
 
         # Set input-specific default options
         for ipt in self._inputs:
