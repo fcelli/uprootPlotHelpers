@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
-from urph.textboxtools import TextBox
+from .TextBox import TextBox
 
 class PlotInterface(ABC, object):
     """
@@ -14,7 +14,6 @@ class PlotInterface(ABC, object):
         instance._options   = {}
         instance._fig       = None
         instance._ax        = None
-        instance._axratio   = None
         instance._add_default_options(
             base = instance._options,
             new  = {
@@ -32,7 +31,15 @@ class PlotInterface(ABC, object):
                 'u_lumi'        : '$fb^{-1}$',
                 'tb_addtext'    : None,
                 'tb_pos'        : (0.05,0.95),
-                'tb_fontsize'   : 14
+                'tb_fontsize'   : 14,
+                # Style
+                'figsize'       : (8,6),
+                'facecolor'     : 'w',
+                'gridcolor'     : '#E6E6E6',
+                'gridlinestyle' : 'solid',
+                'axiscolor'     : 'grey',
+                'tickcolor'     : 'black',
+                'ticklabelcolor': 'black'
                 }
         )
         instance._options.update(kwargs)
@@ -70,6 +77,7 @@ class PlotInterface(ABC, object):
         self._check_args()
         self._set_default_opts()
         self._create_figure()
+        self._set_style()
         self._draw()
         self._hook()
         if self._options['textbox']:
@@ -97,3 +105,40 @@ class PlotInterface(ABC, object):
 
     def _show(self) -> None:
         plt.show()
+        
+    def _set_style(self) -> None:
+        facecolor       = self._options['facecolor']
+        gridcolor       = self._options['gridcolor']
+        gridlinestyle   = self._options['gridlinestyle']
+        axiscolor       = self._options['axiscolor']
+        tickcolor       = self._options['tickcolor']
+        ticklabelcolor  = self._options['ticklabelcolor']
+        
+        # Set default plot style
+        self._ax.set_facecolor(facecolor)
+        self._ax.grid(
+            color       = gridcolor,
+            linestyle   = gridlinestyle
+        )
+        self._ax.set_axisbelow(True)
+        for spine in self._ax.spines.values():
+            spine.set_visible(True)
+            spine.set_color(axiscolor)
+        self._ax.xaxis.tick_bottom()
+        self._ax.yaxis.tick_left()
+        self._ax.tick_params(
+            colors      = tickcolor,
+            direction   = 'out'
+        )
+        for tick in self._ax.get_xticklabels():
+            tick.set_color(ticklabelcolor)
+        for tick in self._ax.get_yticklabels():
+            tick.set_color(ticklabelcolor)
+            
+    @property
+    def fig(self):
+        return self._fig
+
+    @property
+    def ax(self):
+        return self._ax

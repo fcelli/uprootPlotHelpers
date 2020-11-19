@@ -12,7 +12,7 @@ class Hist1D(PlotInterface):
         Args:
             inputs ( [(FileManager, {'opt1':'val1','opt2':'val2'})] ): tuple (or list of tuples) describing input datasets and options.
         """
-        
+        self._axratio = None
         self._run()
 
     def _check_args(self) -> None:
@@ -72,22 +72,16 @@ class Hist1D(PlotInterface):
     def _create_figure(self) -> None:
         """Creates the canvas where the plots will be drawn.
         """
-        #import styletools #FIXME !!!
-        from urph import styletools
-        #TODO make a function to handle style and textbox options
 
         if len(self._inputs)>1 and self._options['makeratio']:
             self._fig, (self._ax, self._axratio) = plt.subplots(
                 2,
-                figsize     = styletools.figsize,
+                figsize     = self._options['figsize'],
                 sharex      = True,
                 gridspec_kw = { 'hspace'       : 0,
                                 'height_ratios': self._options['heightratios'] } ) 
         else:
-            self._fig, self._ax = plt.subplots(figsize=styletools.figsize)
-
-        #TODO this has to go in a separate function
-        styletools.StyleHistos1D(self._ax,self._axratio)
+            self._fig, self._ax = plt.subplots(figsize = self._options['figsize'])
 
     def _draw(self) -> None:
         """Draws plots on the canvas
@@ -190,13 +184,31 @@ class Hist1D(PlotInterface):
             # Set y axis label
             self._axratio.set_ylabel(self._options['ratiolabel'],fontsize=12)
 
-    @property
-    def fig(self):
-        return self._fig
-
-    @property
-    def ax(self):
-        return self._ax
+    def _set_style(self):
+        super()._set_style()
+        facecolor       = self._options['facecolor']
+        gridcolor       = self._options['gridcolor']
+        axiscolor       = self._options['axiscolor']
+        tickcolor       = self._options['tickcolor']
+        ticklabelcolor  = self._options['ticklabelcolor']
+        # Set ratio plot style
+        if self._axratio is not None:
+            self._axratio.set_facecolor(facecolor)
+            self._axratio.yaxis.grid(
+                color       = gridcolor,
+                linestyle   = 'dashed'
+            )
+            self._axratio.set_axisbelow(True)
+            for spine in self._axratio.spines.values():
+                spine.set_visible(True)
+                spine.set_color(axiscolor)
+            self._axratio.xaxis.tick_bottom()
+            self._axratio.yaxis.tick_left()
+            self._axratio.tick_params(colors=tickcolor,direction='out')
+            for tick in self._axratio.get_xticklabels():
+                tick.set_color(ticklabelcolor)
+            for tick in self._axratio.get_yticklabels():
+                tick.set_color(ticklabelcolor)
 
     @property
     def axratio(self):
