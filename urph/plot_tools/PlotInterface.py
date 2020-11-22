@@ -55,9 +55,8 @@ class PlotInterface(ABC, object):
     def _set_default_opts(self) -> None:
         pass
 
-    @abstractmethod
     def _create_figure(self) -> None:
-        pass
+        self._fig, self._ax = plt.subplots(figsize = self._options['figsize'])
 
     def _set_style(self) -> None:
         """Set default plot style

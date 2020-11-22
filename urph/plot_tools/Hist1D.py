@@ -74,7 +74,6 @@ class Hist1D(PlotInterface):
     def _create_figure(self) -> None:
         """Creates the canvas where the plots will be drawn.
         """
-
         if len(self._inputs)>1 and self._options['makeratio']:
             self._fig, (self._ax, self._axratio) = plt.subplots(
                 2,
@@ -83,7 +82,7 @@ class Hist1D(PlotInterface):
                 gridspec_kw = { 'hspace'       : 0,
                                 'height_ratios': self._options['heightratios'] } ) 
         else:
-            self._fig, self._ax = plt.subplots(figsize = self._options['figsize'])
+            super()._create_figure()
 
     def _set_style(self):
         super()._set_style()
@@ -133,7 +132,7 @@ class Hist1D(PlotInterface):
         
         self._bin_contents  = []
         self._bin_edges     = []
-        if isinstance(self._inputs,list):
+        if isinstance(self._inputs, list):
             # Multiple inputs
             for ipt in self._inputs:
                 n, bins = _create_hist(ipt, ipt[1]['var'])
