@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from .PlotInterface import PlotInterface
+from .PlotStyle import PlotStyle
 
 class Hist1D(PlotInterface):
     """
@@ -45,12 +46,13 @@ class Hist1D(PlotInterface):
                 'norm'          : False,
                 'logy'          : False,
                 # Ratio plot
-                'heightratios'  : [3,1],
+                'heightratios'  : (3,1),
                 'ratio'         : 0,
                 'makeratio'     : True,
                 'ratiorange'    : (None,None),
                 'ratiolabel'    : '',
                 'rationydiv'    : 4,
+                'ratiostyle'    : {}
             }
         )
 
@@ -140,8 +142,8 @@ class Hist1D(PlotInterface):
         if self._options['logy']: self._ax.set_yscale('log')
 
         # Axes labels
-        plt.xlabel(self._options['xlabel'],fontsize=14)
-        self._ax.set_ylabel(self._options['ylabel'],fontsize=14)
+        self._ax.set_xlabel(self._options['xlabel'])
+        self._ax.set_ylabel(self._options['ylabel'])
 
         # Axes limits
         self._ax.set_xlim(self._options['xrange'])
@@ -177,39 +179,21 @@ class Hist1D(PlotInterface):
             # Set axes limits
             self._axratio.set_xlim(self._options['xrange'])
             self._axratio.set_ylim(self._options['ratiorange'])
+            # Set axes labels
+            self._axratio.set_xlabel(self._options['xlabel'])
+            self._axratio.set_ylabel(self._options['ratiolabel'])
             # Set y axis ticks
             ylow, yhigh = self._axratio.get_ylim()
             tick_step = float(yhigh-ylow)/self._options['rationydiv']
             self._axratio.yaxis.set_ticks(np.arange(ylow, yhigh, tick_step))
-            # Set y axis label
-            self._axratio.set_ylabel(self._options['ratiolabel'],fontsize=12)
 
     def _set_style(self):
         super()._set_style()
-        facecolor       = self._options['facecolor']
-        gridcolor       = self._options['gridcolor']
-        axiscolor       = self._options['axiscolor']
-        tickcolor       = self._options['tickcolor']
-        ticklabelcolor  = self._options['ticklabelcolor']
-        # Set ratio plot style
-        if self._axratio is not None:
-            self._axratio.set_facecolor(facecolor)
-            self._axratio.yaxis.grid(
-                color       = gridcolor,
-                linestyle   = 'dashed'
-            )
-            self._axratio.set_axisbelow(True)
-            for spine in self._axratio.spines.values():
-                spine.set_visible(True)
-                spine.set_color(axiscolor)
-            self._axratio.xaxis.tick_bottom()
-            self._axratio.yaxis.tick_left()
-            self._axratio.tick_params(colors=tickcolor,direction='out')
-            for tick in self._axratio.get_xticklabels():
-                tick.set_color(ticklabelcolor)
-            for tick in self._axratio.get_yticklabels():
-                tick.set_color(ticklabelcolor)
-
+        # Set style of ratio plot
+        self._options['ratiostyle'].setdefault('gridlinestyle'  ,'dashed')
+        self._options['ratiostyle'].setdefault('ylabelfontsize' ,12)
+        PlotStyle(self._axratio, self._options['ratiostyle'])
+        
     @property
     def axratio(self):
         return self._axratio

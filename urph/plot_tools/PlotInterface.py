@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 from .TextBox import TextBox
+from .PlotStyle import PlotStyle
 
 class PlotInterface(ABC, object):
     """
@@ -18,6 +19,7 @@ class PlotInterface(ABC, object):
             base = instance._options,
             new  = {
                 # Show and Save
+                'figsize'   : (8,6),
                 'show'      : True,
                 'saveas'    : None,
                 # Textbox
@@ -33,13 +35,7 @@ class PlotInterface(ABC, object):
                 'tb_pos'        : (0.05,0.95),
                 'tb_fontsize'   : 14,
                 # Style
-                'figsize'       : (8,6),
-                'facecolor'     : 'w',
-                'gridcolor'     : '#E6E6E6',
-                'gridlinestyle' : 'solid',
-                'axiscolor'     : 'grey',
-                'tickcolor'     : 'black',
-                'ticklabelcolor': 'black'
+                'style'         : {}
                 }
         )
         instance._options.update(kwargs)
@@ -107,33 +103,9 @@ class PlotInterface(ABC, object):
         plt.show()
         
     def _set_style(self) -> None:
-        facecolor       = self._options['facecolor']
-        gridcolor       = self._options['gridcolor']
-        gridlinestyle   = self._options['gridlinestyle']
-        axiscolor       = self._options['axiscolor']
-        tickcolor       = self._options['tickcolor']
-        ticklabelcolor  = self._options['ticklabelcolor']
-        
-        # Set default plot style
-        self._ax.set_facecolor(facecolor)
-        self._ax.grid(
-            color       = gridcolor,
-            linestyle   = gridlinestyle
-        )
-        self._ax.set_axisbelow(True)
-        for spine in self._ax.spines.values():
-            spine.set_visible(True)
-            spine.set_color(axiscolor)
-        self._ax.xaxis.tick_bottom()
-        self._ax.yaxis.tick_left()
-        self._ax.tick_params(
-            colors      = tickcolor,
-            direction   = 'out'
-        )
-        for tick in self._ax.get_xticklabels():
-            tick.set_color(ticklabelcolor)
-        for tick in self._ax.get_yticklabels():
-            tick.set_color(ticklabelcolor)
+        """Set default plot style
+        """
+        PlotStyle(self._ax, self._options['style'])
             
     @property
     def fig(self):
