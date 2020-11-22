@@ -85,6 +85,13 @@ class Hist1D(PlotInterface):
         else:
             self._fig, self._ax = plt.subplots(figsize = self._options['figsize'])
 
+    def _set_style(self):
+        super()._set_style()
+        # Set style of ratio plot
+        self._options['ratiostyle'].setdefault('gridlinestyle'  ,'dashed')
+        self._options['ratiostyle'].setdefault('ylabelfontsize' ,12)
+        PlotStyle(self._axratio, self._options['ratiostyle'])
+
     def _draw(self) -> None:
         """Draws plots on the canvas
         """
@@ -186,13 +193,6 @@ class Hist1D(PlotInterface):
             ylow, yhigh = self._axratio.get_ylim()
             tick_step = float(yhigh-ylow)/self._options['rationydiv']
             self._axratio.yaxis.set_ticks(np.arange(ylow, yhigh, tick_step))
-
-    def _set_style(self):
-        super()._set_style()
-        # Set style of ratio plot
-        self._options['ratiostyle'].setdefault('gridlinestyle'  ,'dashed')
-        self._options['ratiostyle'].setdefault('ylabelfontsize' ,12)
-        PlotStyle(self._axratio, self._options['ratiostyle'])
         
     @property
     def axratio(self):

@@ -22,29 +22,30 @@ class PlotInterface(ABC, object):
                 'figsize'   : (8,6),
                 'show'      : True,
                 'saveas'    : None,
-                # Textbox
-                'textbox'       : False,
-                'experiment'    : None,
-                'internal'      : False,
-                'simulation'    : False,
-                'ecom'          : None,
-                'u_ecom'        : 'TeV',
-                'lumi'          : None,
-                'u_lumi'        : '$fb^{-1}$',
-                'tb_addtext'    : None,
-                'tb_pos'        : (0.05,0.95),
-                'tb_fontsize'   : 14,
-                # Style
-                'style'         : {}
+                'textbox'   : {},
+                'style'     : {}
                 }
         )
         instance._options.update(kwargs)
         return instance
-        
+    
     def _add_default_options(self, base : dict, new : dict) -> None:
         for key in new:
             if key not in base:
                 base.update({key:new[key]})
+
+    def _run(self) -> None:
+        """Main algorithm.
+        """
+        self._check_args()
+        self._set_default_opts()
+        self._create_figure()
+        self._set_style()
+        self._draw()
+        self._hook()
+        self._draw_textbox()
+        self._save_as(self._options['saveas'])
+        self._show()
 
     @abstractmethod
     def _check_args(self) -> None:
@@ -58,6 +59,11 @@ class PlotInterface(ABC, object):
     def _create_figure(self) -> None:
         pass
 
+    def _set_style(self) -> None:
+        """Set default plot style
+        """
+        PlotStyle(self._ax, self._options['style'])
+
     @abstractmethod
     def _draw(self) -> None:
         pass
@@ -67,45 +73,16 @@ class PlotInterface(ABC, object):
         """
         pass
 
-    def _run(self) -> None:
-        """Main algorithm.
-        """
-        self._check_args()
-        self._set_default_opts()
-        self._create_figure()
-        self._set_style()
-        self._draw()
-        self._hook()
-        if self._options['textbox']:
-            self._draw_textbox()
-        if self._options['saveas'] is not None:
-            self._save_as(self._options['saveas'])
-        if self._options['show']:
-            self._show()
-
     def _draw_textbox(self) -> None:
-        tb      = TextBox(self._options)
-        textstr = tb.default()
-        xpos, ypos  = self._options['tb_pos']
-        self._ax.text(
-            xpos,
-            ypos,
-            textstr,
-            transform   = self._ax.transAxes,
-            fontsize    = self._options['tb_fontsize'],
-            verticalalignment = 'top'
-        )
+        TextBox(self._ax, self._options['textbox'])
         
     def _save_as(self,name) -> None:
-        self._fig.savefig(name)
+        if self._options['saveas'] is not None:
+            self._fig.savefig(name)
 
     def _show(self) -> None:
-        plt.show()
-        
-    def _set_style(self) -> None:
-        """Set default plot style
-        """
-        PlotStyle(self._ax, self._options['style'])
+        if self._options['show']:
+            plt.show()
             
     @property
     def fig(self):
