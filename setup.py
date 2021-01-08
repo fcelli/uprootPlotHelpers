@@ -11,6 +11,6 @@ setup(
                  'urph.plot_tools',
                  'urph.file_tools'
                 ],
-    install_requires=['uproot', 'numpy', 'matplotlib', 'pandas'],
+    install_requires=['uproot==3.13.1', 'numpy==1.19.5', 'matplotlib==3.3.3', 'pandas==1.2.0'],
     license='MIT',
 )
